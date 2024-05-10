@@ -20,5 +20,10 @@ public final class GeneratedPluginRegistrant {
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin device_info_plus, dev.fluttercommunity.plus.device_info.DeviceInfoPlusPlugin", e);
     }
+    try {
+      flutterEngine.getPlugins().add(new me.relex.flutter.plugin.window_rounded_corners.WindowRoundedCornersPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin window_rounded_corners, me.relex.flutter.plugin.window_rounded_corners.WindowRoundedCornersPlugin", e);
+    }
   }
 }

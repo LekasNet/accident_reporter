@@ -218,13 +218,19 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "window_rounded_corners",
+      "rootUri": "file:///C:/Users/delim/AppData/Local/Pub/Cache/hosted/pub.dev/window_rounded_corners-0.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "accident_reporter",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     }
   ],
-  "generated": "2024-05-09T19:27:42.653086Z",
+  "generated": "2024-05-10T20:15:49.067560Z",
   "generator": "pub",
   "generatorVersion": "3.3.4"
 }
