@@ -1,0 +1,65 @@
+.btn{
+    background-color: #6c7083;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    font-size: 16px;
+    /*margin-top: 10px;*/
+    margin: 10px 0 10px 0;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-left: 20px;
+}
+.btn:hover{
+    background-color: #3e404a;
+}
+
+.my-select {
+    width: 320px;
+    padding: 5px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 1px solid #cacaca;
+    margin-bottom: 15px;
+}
+
+.my-option {
+    width: 200px;
+    /*height: 20px;*/
+    /*margin: 5px;*/
+    padding: 50px;
+    font-size: 16px;
+}
+
+.table-container {
+    margin: 0 auto; /* Выравнивание таблицы по центру */
+    width: 80%; /* Ширина таблицы */
+}
+
+.table {
+    border-collapse: collapse; /* Убираем двойные границы между ячейками */
+    width: 100%; /* Ширина таблицы равна ширине контейнера */
+}
+
+.table th,
+.table td {
+    border: 1px solid #ddd; /* Граница вокруг ячеек */
+    padding: 8px; /* Отступ внутри ячеек */
+    text-align: left; /* Выравнивание текста по левому краю */
+}
+
+.table th {
+    background-color: #f2f2f2; /* Цвет фона заголовков таблицы */
+    font-weight: bold; /* Полужирный шрифт для заголовков таблицы */
+}
+
+.table tr:nth-child(even) {
+    background-color: #f2f2f2; /* Цвет фона четных строк таблицы */
+}
+
+.table tr:hover {
+    background-color: #ddd; /* Цвет фона при наведении на строку таблицы */
+}

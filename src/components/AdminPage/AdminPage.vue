@@ -6,20 +6,18 @@
     components: {DynamicSvg},
     methods: {
       logout() {
-        // Implement logout logic here
+        this.$router.push('/')
       },
     },
   };
 </script>
 
-
 <template>
   <header>
     <div class="header-wrapper">
       <DynamicSvg name="user" class="icon"/>
-      <button class="btn-logout" @click="logout">
-        <router-link to="/">Logout</router-link>
-      </button>
+<!--      <router-link class="btn-logout" to="/" @click="logout">Logout</router-link>-->
+      <button class="btn-logout" @click="logout">Выход</button>
     </div>
   </header>
   <main>
@@ -27,7 +25,7 @@
       <div class="admin-menu">
         <nav class="menu-bar">
           <router-link class="menu-link" to="/admin/dtp">ДТП</router-link>
-          <router-link class="menu-link" to="/admin">Водители</router-link>
+          <router-link class="menu-link" to="/admin/drivers">Водители</router-link>
           <router-link class="menu-link" to="/admin">Протоколы</router-link>
         </nav>
       </div>

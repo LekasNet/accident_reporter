@@ -6,6 +6,11 @@
     components: {
       DTPCard
     },
+    methods:{
+      back(){
+        this.$router.push('/admin');
+      },
+    },
     data() {
       return {
         cards : [
@@ -23,9 +28,8 @@
 </script>
 
 <template>
-  <button class="btn-logout" @click="logout">
-    <router-link to="/admin">Назад</router-link>
-  </button>
+<!--  <router-link class="btn-logout" to="/admin">Назад</router-link>-->
+  <button class="btn" @click="back">Назад</button>
   <div class="card-list">
     <DTPCard class="card-item"
         v-for="(item, index) in cards"

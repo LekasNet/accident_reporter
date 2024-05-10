@@ -26,7 +26,7 @@ header {
 }
 
 .btn-logout {
-    background-color: #4caf50;
+    background-color: #6c7083;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -41,7 +41,7 @@ header {
 }
 
 .btn-logout:hover{
-    background-color: #377c38;
+    background-color: #3e404a;
 }
 
 .main-wrapper {
