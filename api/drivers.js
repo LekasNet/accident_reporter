@@ -126,10 +126,17 @@ router.post('/add-accident', async (req, res) => {
         const accidentId = accidentResult.rows[0].id;
 
         const participantsQuery = 'INSERT INTO accident_participants (accident_id, driver_id, vehicle_id) VALUES ($1, $2, $3)';
-        const participantsValues = participants.map((participant) => [accidentId, participant.driver_id, participant.vehicle_id]);
 
         await pool.query('BEGIN');
-        await Promise.all(participantsValues.map((values) => pool.query(participantsQuery, values)));
+        for (const participant of participants) {
+            const participantValues = [accidentId, participant.driver_id, participant.vehicle_id];
+            try {
+                await pool.query(participantsQuery, participantValues);
+            } catch (participantError) {
+                console.error(`Error adding participant: ${participant.driver_id}`, participantError);
+                throw participantError;
+            }
+        }
         await pool.query('COMMIT');
 
         res.status(201).json({message: 'Accident information added successfully', accidentId});
