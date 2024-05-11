@@ -49,7 +49,10 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({message: 'Invalid login credentials'});
         }
 
-        const token = jwt.sign({id: officer.id, login: officer.login}, process.env.JWT_ACCESS_SECRET, {expiresIn: '1d'});
+        const token = jwt.sign({
+            id: officer.id,
+            login: officer.login
+        }, process.env.JWT_ACCESS_SECRET, {expiresIn: '1d'});
 
         res.status(200).json({message: 'Login successful', token});
     } catch (error) {
@@ -63,7 +66,7 @@ router.get('/profile', async (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
 
     try {
-        const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_TOKEN);
+        const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
         const query = 'SELECT * FROM police_officers WHERE id = $1';
         const result = await pool.query(query, [decodedToken.id]);
@@ -86,7 +89,7 @@ router.get('/accidents', async (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
 
     try {
-        jwt.verify(token, process.env.JWT_ACCESS_TOKEN);
+        jwt.verify(token, process.env.JWT_ACCESS_SECRET);
         const query = 'SELECT * FROM accidents';
         const result = await pool.query(query);
 
@@ -102,7 +105,7 @@ router.get('/drivers', async (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
 
     try {
-        jwt.verify(token, process.env.JWT_ACCESS_TOKEN);
+        jwt.verify(token, process.env.JWT_ACCESS_SECRET);
         const query = 'SELECT * FROM drivers';
         const result = await pool.query(query);
 
@@ -118,7 +121,7 @@ router.get('/vehicles', async (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
 
     try {
-        jwt.verify(token, process.env.JWT_ACCESS_TOKEN);
+        jwt.verify(token, process.env.JWT_ACCESS_SECRET);
         const query = 'SELECT * FROM vehicles';
         const result = await pool.query(query);
 

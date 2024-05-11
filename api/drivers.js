@@ -71,7 +71,7 @@ router.post('/add-vehicle', async (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
 
     try {
-        const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_TOKEN);
+        const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
         const query = 'INSERT INTO vehicles (brand, model, body_type, reg_number) VALUES ($1, $2, $3, $4) RETURNING *';
         const values = [brand, model, body_type, reg_number];
@@ -98,7 +98,7 @@ router.get('/vehicles', async (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
 
     try {
-        const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_TOKEN);
+        const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
         const query = 'SELECT v.* FROM vehicles v INNER JOIN driver_vehicles dv ON v.id = dv.vehicle_id WHERE dv.driver_id = $1';
         const values = [decodedToken.id];
@@ -118,7 +118,7 @@ router.post('/add-accident', async (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
 
     try {
-        jwt.verify(token, process.env.JWT_ACCESS_TOKEN);
+        jwt.verify(token, process.env.JWT_ACCESS_SECRET);
         const accidentQuery = 'INSERT INTO accidents (report_number, date, location, accident_type, accident_cause, casualties) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id';
         const accidentValues = [report_number, date, location, accident_type, accident_cause, casualties];
 
@@ -145,7 +145,7 @@ router.get('/user-accidents', async (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
 
     try {
-        const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_TOKEN);
+        const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
         const query = 'SELECT a.* FROM accidents a INNER JOIN accident_participants ap ON a.id = ap.accident_id WHERE ap.driver_id = $1';
         const values = [decodedToken.id];
