@@ -1,0 +1,377 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Drivers and Police Department API",
+    "version": "1.0.0",
+    "description": "API for managing drivers and police department interactions"
+  },
+  "servers": [
+    {
+      "url": "https://accident-reporter.onrender.com",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/drivers/register": {
+      "post": {
+        "tags": ["drivers"],
+        "summary": "Register a new driver",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DriverRegistration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Driver registered successfully"
+          },
+          "400": {
+            "description": "Phone number already exists"
+          },
+          "500": {
+            "description": "Error registering driver"
+          }
+        }
+      }
+    },
+    "/drivers/login": {
+      "post": {
+        "tags": ["drivers"],
+        "summary": "Driver login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "401": {
+            "description": "Invalid login credentials"
+          },
+          "500": {
+            "description": "Error logging in"
+          }
+        }
+      }
+    },
+    "/drivers/add-vehicle": {
+      "post": {
+        "tags": ["drivers"],
+        "summary": "Add vehicle information",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Vehicle"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Vehicle added successfully"
+          },
+          "500": {
+            "description": "Error adding vehicle"
+          }
+        }
+      }
+    },
+    "/drivers/vehicles": {
+      "get": {
+        "tags": ["drivers"],
+        "summary": "Get driver's vehicles",
+        "responses": {
+          "200": {
+            "description": "Vehicles retrieved successfully"
+          },
+          "500": {
+            "description": "Error retrieving vehicles"
+          }
+        }
+      }
+    },
+    "/drivers/add-accident": {
+      "post": {
+        "tags": ["drivers"],
+        "summary": "Add accident information",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Accident"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Accident information added successfully"
+          },
+          "500": {
+            "description": "Error adding accident information"
+          }
+        }
+      }
+    },
+    "/drivers/user-accidents": {
+      "get": {
+        "tags": ["drivers"],
+        "summary": "Get user's accidents",
+        "responses": {
+          "200": {
+            "description": "User accidents retrieved successfully"
+          },
+          "500": {
+            "description": "Error retrieving user accidents"
+          }
+        }
+      }
+    },
+    "/policeDepartment/register": {
+      "post": {
+        "tags": ["policeDepartment"],
+        "summary": "Register a new police officer",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PoliceOfficerRegistration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Police officer registered successfully"
+          },
+          "400": {
+            "description": "Phone number already exists"
+          },
+          "500": {
+            "description": "Error registering police officer"
+          }
+        }
+      }
+    },
+    "/policeDepartment/login": {
+      "post": {
+        "tags": ["policeDepartment"],
+        "summary": "Police officer login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "401": {
+            "description": "Invalid login credentials"
+          },
+          "500": {
+            "description": "Error logging in"
+          }
+        }
+      }
+    },
+    "/policeDepartment/profile": {
+      "get": {
+        "tags": ["policeDepartment"],
+        "summary": "Get police officer profile",
+        "responses": {
+          "200": {
+            "description": "Officer profile retrieved successfully"
+          },
+          "404": {
+            "description": "Officer not found"
+          },
+          "500": {
+            "description": "Error retrieving officer profile"
+          }
+        }
+      }
+    },
+    "/policeDepartment/accidents": {
+      "get": {
+        "tags": ["policeDepartment"],
+        "summary": "Get all accidents",
+        "responses": {
+          "200": {
+            "description": "All accidents retrieved successfully"
+          },
+          "500": {
+            "description": "Error retrieving all accidents"
+          }
+        }
+      }
+    },
+    "/policeDepartment/drivers": {
+      "get": {
+        "tags": ["policeDepartment"],
+        "summary": "Get all drivers",
+        "responses": {
+          "200": {
+            "description": "All drivers retrieved successfully"
+          },
+          "500": {
+            "description": "Error retrieving all drivers"
+          }
+        }
+      }
+    },
+    "/policeDepartment/vehicles": {
+      "get": {
+        "tags": ["policeDepartment"],
+        "summary": "Get all vehicles",
+        "responses": {
+          "200": {
+            "description": "All vehicles retrieved successfully"
+          },
+          "500": {
+            "description": "Error retrieving all vehicles"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DriverRegistration": {
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "driving_experience": {
+            "type": "integer"
+          },
+          "driver_license": {
+            "type": "string"
+          }
+        },
+        "required": ["login", "password", "phone", "full_name", "driving_experience", "driver_license"]
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": ["login", "password"]
+      },
+      "Vehicle": {
+        "type": "object",
+        "properties": {
+          "brand": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "body_type": {
+            "type": "string"
+          },
+          "reg_number": {
+            "type": "string"
+          }
+        },
+        "required": ["brand", "model", "body_type", "reg_number"]
+      },
+      "Accident": {
+        "type": "object",
+        "properties": {
+          "report_number": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location": {
+            "type": "string"
+          },
+          "accident_type": {
+            "type": "string"
+          },
+          "accident_cause": {
+            "type": "string"
+          },
+          "casualties": {
+            "type": "integer"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "driver_id": {
+                  "type": "integer"
+                },
+                "vehicle_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "required": ["report_number", "date", "location", "accident_type", "accident_cause", "casualties", "participants"]
+      },
+      "PoliceOfficerRegistration": {
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "department_id": {
+            "type": "integer"
+          }
+        },
+        "required": ["login", "password", "phone", "full_name", "department_id"]
+      }
+    }
+  }
+}
