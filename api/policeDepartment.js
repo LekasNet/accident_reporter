@@ -90,15 +90,37 @@ router.get('/accidents', async (req, res) => {
 
     try {
         jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-        const query = 'SELECT * FROM accidents';
+
+        const query = `
+            SELECT a.id,
+                   a.report_number,
+                   a.date,
+                   a.location,
+                   a.accident_type,
+                   a.accident_cause,
+                   a.casualties,
+                   array_agg(json_build_object('driver_id', ap.driver_id, 'vehicle_id', ap.vehicle_id)) AS participants
+            FROM accidents a
+                     LEFT JOIN accident_participants ap ON a.id = ap.accident_id
+            GROUP BY a.id, a.report_number, a.date, a.location, a.accident_type, a.accident_cause, a.casualties
+            ORDER BY a.date DESC, a.id;`;
+
         const result = await pool.query(query);
 
-        res.status(200).json({message: 'All accidents retrieved successfully', data: result.rows});
+        const accidentsWithParticipants = result.rows.map(accident => {
+            return {
+                ...accident,
+                participants: accident.participants.filter(participant => participant.driver_id != null)
+            };
+        });
+
+        res.status(200).json({message: 'All accidents retrieved successfully', data: accidentsWithParticipants});
     } catch (error) {
         console.error(error);
         res.status(500).json({message: 'Error retrieving all accidents'});
     }
 });
+
 
 // Получение сведений о водителях
 router.get('/drivers', async (req, res) => {
