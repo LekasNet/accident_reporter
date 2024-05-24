@@ -100,6 +100,40 @@
         }
       }
     },
+    "/drivers/delete-vehicle/{vehicleId}": {
+      "delete": {
+        "tags": [
+          "drivers"
+        ],
+        "summary": "Delete a vehicle",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vehicleId",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vehicle deleted successfully"
+          },
+          "403": {
+            "description": "You do not have permission to delete this vehicle"
+          },
+          "500": {
+            "description": "Error deleting vehicle"
+          }
+        }
+      }
+    },
     "/drivers/vehicles": {
       "get": {
         "tags": [

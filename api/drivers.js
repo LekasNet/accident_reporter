@@ -91,6 +91,40 @@ router.post('/add-vehicle', async (req, res) => {
     }
 });
 
+// Удаление информации об автомобиле
+router.delete('/delete-vehicle/:vehicleId', async (req, res) => {
+    const vehicleId = req.params.vehicleId;
+    const token = req.headers.authorization;
+
+    try {
+        const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+
+        const driverId = decodedToken.id;
+
+        // Check if the vehicle belongs to the driver
+        const checkQuery = 'SELECT * FROM driver_vehicles WHERE driver_id = $1 AND vehicle_id = $2';
+        const checkValues = [driverId, vehicleId];
+        const checkResult = await pool.query(checkQuery, checkValues);
+
+        if (checkResult.rows.length === 0) {
+            return res.status(403).json({message: 'You do not have permission to delete this vehicle'});
+        }
+
+        // Delete the vehicle from the driver_vehicles table
+        const deleteQuery = 'DELETE FROM driver_vehicles WHERE driver_id = $1 AND vehicle_id = $2';
+        await pool.query(deleteQuery, checkValues);
+
+        // Delete the vehicle from the vehicles table
+        const deleteVehicleQuery = 'DELETE FROM vehicles WHERE id = $1';
+        await pool.query(deleteVehicleQuery, [vehicleId]);
+
+        res.status(200).json({message: 'Vehicle deleted successfully'});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: 'Error deleting vehicle'});
+    }
+});
+
 // Получение информации об автомобилях водителя
 router.get('/vehicles', async (req, res) => {
     const token = req.headers.authorization;
