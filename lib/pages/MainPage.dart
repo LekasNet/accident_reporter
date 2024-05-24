@@ -1,11 +1,10 @@
-import 'package:accident_reporter/commons/theme.dart';
 import 'package:accident_reporter/templates/accidentList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:window_rounded_corners/window_rounded_corners.dart';
+
 
 import '../commons/constants.dart';
+import '../domains/requests/getVehicles.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -19,6 +18,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     loadCornerRadius();
+
   }
 
   Future<void> loadCornerRadius() async {
@@ -58,7 +58,7 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
                 child: const Text(
-                  'Click Me',
+                  'Сообщить об аварии',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
