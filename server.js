@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 app.use(cors(corsOptions));
-app.use('/police-department', policeOfficersRouter);
+app.use('/policeDepartment', policeOfficersRouter);
 app.use('/drivers', driversRouter);
 app.use('/swagger', swaggerRouter)
 

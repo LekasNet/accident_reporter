@@ -63,7 +63,7 @@ router.post('/login', async (req, res) => {
 
 // Получения информации о текущем сотруднике ГИБДД
 router.get('/profile', async (req, res) => {
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization;
 
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
@@ -86,7 +86,7 @@ router.get('/profile', async (req, res) => {
 
 // Получения всех ДТП
 router.get('/accidents', async (req, res) => {
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization;
 
     try {
         jwt.verify(token, process.env.JWT_ACCESS_SECRET);
@@ -124,7 +124,7 @@ router.get('/accidents', async (req, res) => {
 
 // Получение сведений о водителях
 router.get('/drivers', async (req, res) => {
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization;
 
     try {
         jwt.verify(token, process.env.JWT_ACCESS_SECRET);
@@ -140,7 +140,7 @@ router.get('/drivers', async (req, res) => {
 
 // Получение сведений об автомобилях
 router.get('/vehicles', async (req, res) => {
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization;
 
     try {
         jwt.verify(token, process.env.JWT_ACCESS_SECRET);

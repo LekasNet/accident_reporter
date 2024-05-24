@@ -20,10 +20,8 @@ router.post('/register', async (req, res) => {
 
         const query = 'INSERT INTO drivers (login, password, phone, full_name, driving_experience, driver_license) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
         const values = [login, hashedPassword, phone, full_name, driving_experience, driver_license];
-
-        const result = await pool.query(query, values);
-
-        res.status(201).json({message: 'Driver registered successfully', data: result.rows[0]});
+        await pool.query(query, values);
+        res.status(201).json({message: 'Driver registered successfully'});
     } catch (error) {
         console.error(error);
         res.status(500).json({message: 'Error registering driver'});
@@ -68,7 +66,7 @@ router.post('/login', async (req, res) => {
 // Добавление информации об автомобиле
 router.post('/add-vehicle', async (req, res) => {
     const {brand, model, body_type, reg_number} = req.body;
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization;
 
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
@@ -95,7 +93,7 @@ router.post('/add-vehicle', async (req, res) => {
 
 // Получение информации об автомобилях водителя
 router.get('/vehicles', async (req, res) => {
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization;
 
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
@@ -115,7 +113,7 @@ router.get('/vehicles', async (req, res) => {
 // Добавление информации о ДТП
 router.post('/add-accident', async (req, res) => {
     const {report_number, date, location, accident_type, accident_cause, casualties, participants} = req.body;
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization;
 
     try {
         jwt.verify(token, process.env.JWT_ACCESS_SECRET);
@@ -149,7 +147,7 @@ router.post('/add-accident', async (req, res) => {
 
 // Получения всех ДТП с участием пользователя
 router.get('/user-accidents', async (req, res) => {
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization;
 
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);

@@ -7,14 +7,15 @@
   },
   "servers": [
     {
-      "url": "https://accident-reporter.onrender.com",
-      "description": "Local server"
+      "url": "https://accident-reporter.onrender.com"
     }
   ],
   "paths": {
     "/drivers/register": {
       "post": {
-        "tags": ["drivers"],
+        "tags": [
+          "drivers"
+        ],
         "summary": "Register a new driver",
         "requestBody": {
           "required": true,
@@ -41,7 +42,9 @@
     },
     "/drivers/login": {
       "post": {
-        "tags": ["drivers"],
+        "tags": [
+          "drivers"
+        ],
         "summary": "Driver login",
         "requestBody": {
           "required": true,
@@ -68,8 +71,15 @@
     },
     "/drivers/add-vehicle": {
       "post": {
-        "tags": ["drivers"],
+        "tags": [
+          "drivers"
+        ],
         "summary": "Add vehicle information",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -92,8 +102,15 @@
     },
     "/drivers/vehicles": {
       "get": {
-        "tags": ["drivers"],
+        "tags": [
+          "drivers"
+        ],
         "summary": "Get driver's vehicles",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Vehicles retrieved successfully"
@@ -106,8 +123,15 @@
     },
     "/drivers/add-accident": {
       "post": {
-        "tags": ["drivers"],
+        "tags": [
+          "drivers"
+        ],
         "summary": "Add accident information",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -130,8 +154,15 @@
     },
     "/drivers/user-accidents": {
       "get": {
-        "tags": ["drivers"],
+        "tags": [
+          "drivers"
+        ],
         "summary": "Get user's accidents",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "User accidents retrieved successfully"
@@ -144,8 +175,15 @@
     },
     "/policeDepartment/register": {
       "post": {
-        "tags": ["policeDepartment"],
+        "tags": [
+          "policeDepartment"
+        ],
         "summary": "Register a new police officer",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -171,8 +209,15 @@
     },
     "/policeDepartment/login": {
       "post": {
-        "tags": ["policeDepartment"],
+        "tags": [
+          "policeDepartment"
+        ],
         "summary": "Police officer login",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -198,8 +243,15 @@
     },
     "/policeDepartment/profile": {
       "get": {
-        "tags": ["policeDepartment"],
+        "tags": [
+          "policeDepartment"
+        ],
         "summary": "Get police officer profile",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Officer profile retrieved successfully"
@@ -215,8 +267,15 @@
     },
     "/policeDepartment/accidents": {
       "get": {
-        "tags": ["policeDepartment"],
+        "tags": [
+          "policeDepartment"
+        ],
         "summary": "Get all accidents",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "All accidents retrieved successfully"
@@ -229,8 +288,15 @@
     },
     "/policeDepartment/drivers": {
       "get": {
-        "tags": ["policeDepartment"],
+        "tags": [
+          "policeDepartment"
+        ],
         "summary": "Get all drivers",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "All drivers retrieved successfully"
@@ -243,8 +309,15 @@
     },
     "/policeDepartment/vehicles": {
       "get": {
-        "tags": ["policeDepartment"],
+        "tags": [
+          "policeDepartment"
+        ],
         "summary": "Get all vehicles",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "All vehicles retrieved successfully"
@@ -257,6 +330,13 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
     "schemas": {
       "DriverRegistration": {
         "type": "object",
@@ -280,7 +360,14 @@
             "type": "string"
           }
         },
-        "required": ["login", "password", "phone", "full_name", "driving_experience", "driver_license"]
+        "required": [
+          "login",
+          "password",
+          "phone",
+          "full_name",
+          "driving_experience",
+          "driver_license"
+        ]
       },
       "Login": {
         "type": "object",
@@ -292,7 +379,10 @@
             "type": "string"
           }
         },
-        "required": ["login", "password"]
+        "required": [
+          "login",
+          "password"
+        ]
       },
       "Vehicle": {
         "type": "object",
@@ -310,7 +400,12 @@
             "type": "string"
           }
         },
-        "required": ["brand", "model", "body_type", "reg_number"]
+        "required": [
+          "brand",
+          "model",
+          "body_type",
+          "reg_number"
+        ]
       },
       "Accident": {
         "type": "object",
@@ -349,7 +444,15 @@
             }
           }
         },
-        "required": ["report_number", "date", "location", "accident_type", "accident_cause", "casualties", "participants"]
+        "required": [
+          "report_number",
+          "date",
+          "location",
+          "accident_type",
+          "accident_cause",
+          "casualties",
+          "participants"
+        ]
       },
       "PoliceOfficerRegistration": {
         "type": "object",
@@ -370,7 +473,13 @@
             "type": "integer"
           }
         },
-        "required": ["login", "password", "phone", "full_name", "department_id"]
+        "required": [
+          "login",
+          "password",
+          "phone",
+          "full_name",
+          "department_id"
+        ]
       }
     }
   }
