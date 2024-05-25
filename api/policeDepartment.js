@@ -125,6 +125,7 @@ router.get('/accidents', async (req, res) => {
 // Получение сведений о водителях
 router.get('/drivers', async (req, res) => {
     const token = req.headers.authorization;
+    console.log(token);
 
     try {
         jwt.verify(token, process.env.JWT_ACCESS_SECRET);
