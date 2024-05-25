@@ -9,7 +9,7 @@ router.post('/register', async (req, res) => {
     const {login, password, phone, full_name, driving_experience, driver_license} = req.body;
 
     try {
-        const phoneCheckQuery = 'SELECT * FROM drivers WHERE phone = $1';
+        const phoneCheckQuery = 'SELECT * FROM driver WHERE phone = $1';
         const phoneCheckResult = await pool.query(phoneCheckQuery, [phone]);
 
         if (phoneCheckResult.rows.length > 0) {
@@ -18,7 +18,7 @@ router.post('/register', async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const query = 'INSERT INTO drivers (login, password, phone, full_name, driving_experience, driver_license) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
+        const query = 'INSERT INTO driver (login, password, phone, full_name, driving_experience, driver_license) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
         const values = [login, hashedPassword, phone, full_name, driving_experience, driver_license];
         await pool.query(query, values);
         res.status(201).json({message: 'Driver registered successfully'});
@@ -33,7 +33,7 @@ router.post('/login', async (req, res) => {
     const {login, password} = req.body;
 
     try {
-        const query = 'SELECT * FROM drivers WHERE login = $1';
+        const query = 'SELECT * FROM driver WHERE login = $1';
         const result = await pool.query(query, [login]);
 
         if (result.rows.length === 0) {
@@ -71,7 +71,7 @@ router.post('/add-vehicle', async (req, res) => {
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
-        const query = 'INSERT INTO vehicles (brand, model, body_type, reg_number) VALUES ($1, $2, $3, $4) RETURNING *';
+        const query = 'INSERT INTO vehicle (brand, model, body_type, reg_number) VALUES ($1, $2, $3, $4) RETURNING *';
         const values = [brand, model, body_type, reg_number];
 
         const result = await pool.query(query, values);
@@ -79,7 +79,7 @@ router.post('/add-vehicle', async (req, res) => {
         const vehicleId = result.rows[0].id;
         const driverId = decodedToken.id;
 
-        const driverVehicleQuery = 'INSERT INTO driver_vehicles (driver_id, vehicle_id) VALUES ($1, $2)';
+        const driverVehicleQuery = 'INSERT INTO driver_vehicle (driver_id, vehicle_id) VALUES ($1, $2)';
         const driverVehicleValues = [driverId, vehicleId];
 
         await pool.query(driverVehicleQuery, driverVehicleValues);
@@ -102,7 +102,7 @@ router.delete('/delete-vehicle/:vehicleId', async (req, res) => {
         const driverId = decodedToken.id;
 
         // Check if the vehicle belongs to the driver
-        const checkQuery = 'SELECT * FROM driver_vehicles WHERE driver_id = $1 AND vehicle_id = $2';
+        const checkQuery = 'SELECT * FROM driver_vehicle WHERE driver_id = $1 AND vehicle_id = $2';
         const checkValues = [driverId, vehicleId];
         const checkResult = await pool.query(checkQuery, checkValues);
 
@@ -111,11 +111,11 @@ router.delete('/delete-vehicle/:vehicleId', async (req, res) => {
         }
 
         // Delete the vehicle from the driver_vehicles table
-        const deleteQuery = 'DELETE FROM driver_vehicles WHERE driver_id = $1 AND vehicle_id = $2';
+        const deleteQuery = 'DELETE FROM driver_vehicle WHERE driver_id = $1 AND vehicle_id = $2';
         await pool.query(deleteQuery, checkValues);
 
         // Delete the vehicle from the vehicles table
-        const deleteVehicleQuery = 'DELETE FROM vehicles WHERE id = $1';
+        const deleteVehicleQuery = 'DELETE FROM vehicle WHERE id = $1';
         await pool.query(deleteVehicleQuery, [vehicleId]);
 
         res.status(200).json({message: 'Vehicle deleted successfully'});
@@ -132,7 +132,7 @@ router.get('/vehicles', async (req, res) => {
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
-        const query = 'SELECT v.* FROM vehicles v INNER JOIN driver_vehicles dv ON v.id = dv.vehicle_id WHERE dv.driver_id = $1';
+        const query = 'SELECT v.* FROM vehicle v INNER JOIN driver_vehicle dv ON v.id = dv.vehicle_id WHERE dv.driver_id = $1';
         const values = [decodedToken.id];
 
         const result = await pool.query(query, values);
@@ -151,13 +151,13 @@ router.post('/add-accident', async (req, res) => {
 
     try {
         jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-        const accidentQuery = 'INSERT INTO accidents (report_number, date, location, accident_type, accident_cause, casualties) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id';
+        const accidentQuery = 'INSERT INTO accident (report_number, date, location, accident_type, accident_cause, casualties) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id';
         const accidentValues = [report_number, date, location, accident_type, accident_cause, casualties];
 
         const accidentResult = await pool.query(accidentQuery, accidentValues);
         const accidentId = accidentResult.rows[0].id;
 
-        const participantsQuery = 'INSERT INTO accident_participants (accident_id, driver_id, vehicle_id) VALUES ($1, $2, $3)';
+        const participantsQuery = 'INSERT INTO accident_participant (accident_id, driver_id, vehicle_id) VALUES ($1, $2, $3)';
 
         await pool.query('BEGIN');
         for (const participant of participants) {
@@ -186,7 +186,7 @@ router.get('/user-accidents', async (req, res) => {
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
-        const query = 'SELECT a.* FROM accidents a INNER JOIN accident_participants ap ON a.id = ap.accident_id WHERE ap.driver_id = $1';
+        const query = 'SELECT a.* FROM accident a INNER JOIN accident_participant ap ON a.id = ap.accident_id WHERE ap.driver_id = $1';
         const values = [decodedToken.id];
 
         const result = await pool.query(query, values);

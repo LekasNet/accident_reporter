@@ -9,7 +9,7 @@ router.post('/register', async (req, res) => {
     const {login, password, phone, full_name, department_id} = req.body;
 
     try {
-        const phoneCheckQuery = 'SELECT * FROM police_officers WHERE phone = $1';
+        const phoneCheckQuery = 'SELECT * FROM police_officer WHERE phone = $1';
         const phoneCheckResult = await pool.query(phoneCheckQuery, [phone]);
 
         if (phoneCheckResult.rows.length > 0) {
@@ -18,7 +18,7 @@ router.post('/register', async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const query = 'INSERT INTO police_officers (login, password, phone, full_name, department_id) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+        const query = 'INSERT INTO police_officer (login, password, phone, full_name, department_id) VALUES ($1, $2, $3, $4, $5) RETURNING *';
         const values = [login, hashedPassword, phone, full_name, department_id];
 
         const result = await pool.query(query, values);
@@ -35,7 +35,7 @@ router.post('/login', async (req, res) => {
     const {login, password} = req.body;
 
     try {
-        const query = 'SELECT * FROM police_officers WHERE login = $1';
+        const query = 'SELECT * FROM police_officer WHERE login = $1';
         const result = await pool.query(query, [login]);
 
         if (result.rows.length === 0) {
@@ -68,7 +68,7 @@ router.get('/profile', async (req, res) => {
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
-        const query = 'SELECT * FROM police_officers WHERE id = $1';
+        const query = 'SELECT * FROM police_officer WHERE id = $1';
         const result = await pool.query(query, [decodedToken.id]);
 
         if (result.rows.length === 0) {
@@ -100,8 +100,8 @@ router.get('/accidents', async (req, res) => {
                    a.accident_cause,
                    a.casualties,
                    array_agg(json_build_object('driver_id', ap.driver_id, 'vehicle_id', ap.vehicle_id)) AS participants
-            FROM accidents a
-                     LEFT JOIN accident_participants ap ON a.id = ap.accident_id
+            FROM accident a
+                     LEFT JOIN accident_participant ap ON a.id = ap.accident_id
             GROUP BY a.id, a.report_number, a.date, a.location, a.accident_type, a.accident_cause, a.casualties
             ORDER BY a.date DESC, a.id;`;
 
@@ -128,7 +128,7 @@ router.get('/drivers', async (req, res) => {
 
     try {
         jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-        const query = 'SELECT * FROM drivers';
+        const query = 'SELECT * FROM driver';
         const result = await pool.query(query);
 
         res.status(200).json({message: 'All drivers retrieved successfully', data: result.rows});
@@ -144,7 +144,7 @@ router.get('/vehicles', async (req, res) => {
 
     try {
         jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-        const query = 'SELECT * FROM vehicles';
+        const query = 'SELECT * FROM vehicle';
         const result = await pool.query(query);
 
         res.status(200).json({message: 'All vehicles retrieved successfully', data: result.rows});
