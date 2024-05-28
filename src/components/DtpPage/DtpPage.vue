@@ -75,9 +75,7 @@
               description: item.accident_cause,
               gosNumbAdditionalInfo: item.participants.driver_id,
               dataAdditionalInfo: item.accident_type,
-              // vehicles_id: item.participants.vehicle_id,
             }));
-
           } else {
             console.error('Ошибка: сервер не возвращает массив данных');
           }
