@@ -1,115 +1,5 @@
-<script>
-  import './DriversPage.css';
-  export default {
-    name: 'DriversPage',
-    methods:{
-      back() {
-        this.$router.push('/admin')
-      },
-    },
-    mounted() {
-      const data = [
-        { id: 1, firstName: 'Иван', lastName: 'Иванов', middleName: 'Иванович', age: 30, accidents: 2 },
-        { id: 2, firstName: 'Петр', lastName: 'Петров', middleName: 'Петрович', age: 40, accidents: 4 },
-        { id: 3, firstName: 'Анна', lastName: 'Сидорова', middleName: 'Сергеевна', age: 25, accidents: 1 },
-        // ...
-      ];
-
-      // const table = document.getElementById("drTable");
-      // data.forEach(item => {
-      //   const row = document.createElement('tr');
-      //   const idCell = document.createElement('td');
-      //   idCell.textContent = item.id;
-      //   const lastNameCell = document.createElement('td');
-      //   lastNameCell.textContent = item.lastName;
-      //   const firstNameCell = document.createElement('td');
-      //   firstNameCell.textContent = item.firstName;
-      //   const middleNameCell = document.createElement('td');
-      //   middleNameCell.textContent = item.middleName;
-      //   const ageCell = document.createElement('td');
-      //   ageCell.textContent = item.age;
-      //   const accidentsCell = document.createElement('td');
-      //   accidentsCell.textContent = item.accidents;
-      //
-      //   row.appendChild(lastNameCell);
-      //   row.appendChild(firstNameCell);
-      //   row.appendChild(middleNameCell);
-      //   row.appendChild(ageCell);
-      //   row.appendChild(accidentsCell);
-      //
-      //   table.querySelector('tbody').appendChild(row);
-      // })
-
-      function updateTable(data) {
-        // Получение элемента таблицы
-        const table = document.getElementById('drTable');
-
-        // Удаление всех строк из таблицы, кроме заголовка
-        // const headerRow = table.querySelector('thead tr');
-        const tbody = table.querySelector('tbody');
-        tbody.innerHTML = '';
-
-        // Добавление новых строк в таблицу
-        data.forEach(item => {
-          // Создание строки
-          const row = document.createElement('tr');
-
-          // Создание ячеек
-          const idCell = document.createElement('td');
-          idCell.textContent = item.id;
-          const firstNameCell = document.createElement('td');
-          firstNameCell.textContent = item.firstName;
-          const lastNameCell = document.createElement('td');
-          lastNameCell.textContent = item.lastName;
-          const middleNameCell = document.createElement('td');
-          middleNameCell.textContent = item.middleName;
-          const ageCell = document.createElement('td');
-          ageCell.textContent = item.age;
-          const accidentsCell = document.createElement('td');
-          accidentsCell.textContent = item.accidents;
-
-          // Добавление ячеек в строку
-
-          row.appendChild(lastNameCell);
-          row.appendChild(firstNameCell);
-          row.appendChild(middleNameCell);
-          row.appendChild(ageCell);
-          row.appendChild(accidentsCell);
-
-          // Добавление строки в таблицу
-          tbody.appendChild(row);
-        });
-      }
-
-      const sortSelect = document.getElementById('sort-select');
-
-      sortSelect.addEventListener('change', function() {
-
-        const selectedValue = sortSelect.value;
-
-        let sortedData = [];
-        if (selectedValue === 'accidents-asc') {
-          sortedData = data.sort((a, b) => a.accidents - b.accidents);
-        }else if (selectedValue === 'accidents-desc') {
-          sortedData = data.sort((a, b) => b.accidents - a.accidents);
-        } else if (selectedValue === 'id-asc') {
-          sortedData = data.sort((a, b) => a.id - b.id);
-        } else if (selectedValue === 'name-asc') {
-          sortedData = data.sort((a, b) => a.firstName.localeCompare(b.firstName));
-        } else if (selectedValue === 'name-desc') {
-          sortedData = data.sort((a, b) => b.firstName.localeCompare(a.firstName));
-        }
-
-        updateTable(sortedData);
-      });
-    }
-  };
-
-</script>
-
 <template>
   <div class="drivers-wrapper">
-<!--    <router-link class="btn" to="/admin">Назад</router-link>-->
     <button class="btn" @click="back">Назад</button>
     <h2>Список водителей:</h2>
     <select id="sort-select" class="my-select">
@@ -123,22 +13,103 @@
     <div class="table-container">
       <table id="drTable" class="table table-condensed table-striped table-bordered table-fixed-width">
         <thead>
-          <tr>
-            <th>Фамилия</th>
-            <th>Имя</th>
-            <th>Отчество</th>
-            <th>Возраст</th>
-            <th>Кол-во ДТП</th>
-          </tr>
+        <tr>
+          <th>ФИО</th>
+          <th>Телефон</th>
+          <th>Опыт вождения</th>
+          <th>Лицензия</th>
+        </tr>
         </thead>
         <tbody>
         </tbody>
       </table>
     </div>
-
   </div>
 </template>
 
-<style scoped>
+<script>
+import './DriversPage.css';
 
-</style>
+export default {
+  name: 'DriversPage',
+  data() {
+    return {
+      drivers: [],
+    };
+  },
+  methods: {
+    back() {
+      this.$router.push('/admin');
+    },
+    async getDrivers() {
+      try {
+        const token = localStorage.getItem('token');
+        console.log(token);
+        const request = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': `${token}`,
+          },
+        };
+        const response = await fetch('https://accident-reporter.onrender.com/policeDepartment/drivers', request);
+        const jsonResponse = await response.json();
+        console.log(jsonResponse.data);
+        if (Array.isArray(jsonResponse.data)) {
+          this.drivers = jsonResponse.data;
+          this.updateTable(this.drivers);
+        } else {
+          console.error('Ошибка: сервер не возвращает массив данных');
+        }
+      } catch (error) {
+        console.error('Ошибка получения данных о водителях:', error);
+      }
+    },
+    updateTable(data) {
+      const table = document.getElementById('drTable');
+      const tbody = table.querySelector('tbody');
+      tbody.innerHTML = '';
+
+      data.forEach(driver => {
+        const row = document.createElement('tr');
+        const fullNameCell = document.createElement('td');
+        fullNameCell.textContent = driver.full_name;
+        const phoneCell = document.createElement('td');
+        phoneCell.textContent = driver.phone;
+        const experienceCell = document.createElement('td');
+        experienceCell.textContent = driver.driving_experience;
+        const licenceCell = document.createElement('td');
+        licenceCell.textContent = driver.driver_license;
+
+        row.appendChild(fullNameCell);
+        row.appendChild(phoneCell);
+        row.appendChild(experienceCell);
+        row.appendChild(licenceCell);
+        tbody.appendChild(row);
+      });
+    }
+  },
+  mounted() {
+    this.getDrivers();
+
+    const sortSelect = document.getElementById('sort-select');
+    sortSelect.addEventListener('change', function() {
+      const selectedValue = sortSelect.value;
+      let sortedData = [];
+      if (selectedValue === 'accidents-asc') {
+        sortedData = this.drivers.sort((a, b) => a.accidents - b.accidents);
+      // } else if (selectedValue === 'accidents-desc') {
+      //   sortedData = this.drivers.sort((a, b) => b.accidents - a.accidents);
+      // } else if (selectedValue === 'id-asc') {
+      //   sortedData = this.drivers.sort((a, b) => a.id - b.id);
+      // } else if (selectedValue === 'name-asc') {
+      //   sortedData = this.drivers.sort((a, b) => a.full_name.localeCompare(b.full_name));
+      // } else if (selectedValue === 'name-desc') {
+      //   sortedData = this.drivers.sort((a, b) => b.full_name.localeCompare(a.full_name));
+      }
+
+      this.updateTable(sortedData);
+    }.bind(this));
+  },
+};
+</script>

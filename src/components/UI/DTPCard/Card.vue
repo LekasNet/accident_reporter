@@ -77,9 +77,13 @@
           <p>{{dataAdditionalInfo}}</p>
         </div>
       </div>
-      <div class="card-info">
+      <div class="card-info" @click="showInfo('description')">
         <p>Описание:</p>
-        <p class="cars-description-item">{{description}}</p>
+        <p class="cars-description-item">подробнее..</p>
+        <div class="additional-info" v-if="activeInfo === 'description'">
+          <p>Дополнительная информация:</p>
+          <p>{{description}}</p>
+        </div>
       </div>
     </div>
   </div>

@@ -26,7 +26,7 @@
         <nav class="menu-bar">
           <router-link class="menu-link" to="/admin/dtp">ДТП</router-link>
           <router-link class="menu-link" to="/admin/drivers">Водители</router-link>
-          <router-link class="menu-link" to="/admin">Протоколы</router-link>
+          <router-link class="menu-link" to="/admin">Транспорт</router-link>
         </nav>
       </div>
       <div class="main-content">
