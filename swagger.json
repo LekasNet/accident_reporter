@@ -207,37 +207,6 @@
         }
       }
     },
-    "/drivers/add-accident-auto": {
-      "post": {
-        "tags": [
-          "drivers"
-        ],
-        "summary": "Automatically add accident information",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccidentAuto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Accident information added successfully"
-          },
-          "500": {
-            "description": "Error adding accident information"
-          }
-        }
-      }
-    },
     "/policeDepartment/register": {
       "post": {
         "tags": [
@@ -497,6 +466,12 @@
                 }
               }
             }
+          },
+          "photos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -506,39 +481,8 @@
           "accident_type",
           "accident_cause",
           "casualties",
-          "participants"
-        ]
-      },
-      "AccidentAuto": {
-        "type": "object",
-        "properties": {
-          "report_number": {
-            "type": "string"
-          },
-          "date": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "location": {
-            "type": "string"
-          },
-          "accident_type": {
-            "type": "string"
-          },
-          "accident_cause": {
-            "type": "string"
-          },
-          "casualties": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "report_number",
-          "date",
-          "location",
-          "accident_type",
-          "accident_cause",
-          "casualties"
+          "participants",
+          "photos"
         ]
       },
       "PoliceOfficerRegistration": {
