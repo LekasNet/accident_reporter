@@ -101,7 +101,6 @@ router.delete('/delete-vehicle/:vehicleId', async (req, res) => {
 
         const driverId = decodedToken.id;
 
-        // Check if the vehicle belongs to the driver
         const checkQuery = 'SELECT * FROM driver_vehicle WHERE driver_id = $1 AND vehicle_id = $2';
         const checkValues = [driverId, vehicleId];
         const checkResult = await pool.query(checkQuery, checkValues);
@@ -110,11 +109,9 @@ router.delete('/delete-vehicle/:vehicleId', async (req, res) => {
             return res.status(403).json({message: 'You do not have permission to delete this vehicle'});
         }
 
-        // Delete the vehicle from the driver_vehicles table
         const deleteQuery = 'DELETE FROM driver_vehicle WHERE driver_id = $1 AND vehicle_id = $2';
         await pool.query(deleteQuery, checkValues);
 
-        // Delete the vehicle from the vehicles table
         const deleteVehicleQuery = 'DELETE FROM vehicle WHERE id = $1';
         await pool.query(deleteVehicleQuery, [vehicleId]);
 
@@ -157,15 +154,15 @@ router.post('/add-accident', async (req, res) => {
         const accidentResult = await pool.query(accidentQuery, accidentValues);
         const accidentId = accidentResult.rows[0].id;
 
-        const participantsQuery = 'INSERT INTO accident_participant (accident_id, driver_id, vehicle_id) VALUES ($1, $2, $3)';
+        const participantsQuery = 'INSERT INTO accident_participant (accident_id, participant_driver_license, participant_vehicle_reg_number) VALUES ($1, $2, $3)';
 
         await pool.query('BEGIN');
         for (const participant of participants) {
-            const participantValues = [accidentId, participant.driver_id, participant.vehicle_id];
+            const participantValues = [accidentId, participant.driver_license, participant.vehicle_reg_number];
             try {
                 await pool.query(participantsQuery, participantValues);
             } catch (participantError) {
-                console.error(`Error adding participant: ${participant.driver_id}`, participantError);
+                console.error(`Error adding participant: ${participant.driver_license}`, participantError);
                 throw participantError;
             }
         }
@@ -179,6 +176,50 @@ router.post('/add-accident', async (req, res) => {
     }
 });
 
+// Автоматическое добавление информации о ДТП при столкновении
+router.post('/add-accident-auto', async (req, res) => {
+    const {report_number, date, location, accident_type, accident_cause, casualties} = req.body;
+    const token = req.headers.authorization;
+
+    try {
+        const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+
+        const accidentQuery = 'INSERT INTO accident (report_number, date, location, accident_type, accident_cause, casualties) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id';
+        const accidentValues = [report_number, date, location, accident_type, accident_cause, casualties];
+
+        const accidentResult = await pool.query(accidentQuery, accidentValues);
+        const accidentId = accidentResult.rows[0].id;
+
+        const driverQuery = 'SELECT driver_license FROM driver WHERE id = $1';
+        const driverValues = [decodedToken.id];
+        const driverResult = await pool.query(driverQuery, driverValues);
+        const driverLicense = driverResult.rows.driver_license;
+
+        const vehicleQuery = 'SELECT reg_number FROM driver_vehicle dv INNER JOIN vehicle v ON dv.vehicle_id = v.id WHERE dv.driver_id = $1';
+        const vehicleValues = [decodedToken.id];
+        const vehicleResult = await pool.query(vehicleQuery, vehicleValues);
+        const vehicleRegNumber = vehicleResult.rows.reg_number;
+
+        const participantQuery = 'INSERT INTO accident_participant (accident_id, participant_driver_license, participant_vehicle_reg_number) VALUES ($1, $2, $3)';
+        const participantValues = [accidentId, driverLicense, vehicleRegNumber];
+
+        await pool.query('BEGIN');
+        try {
+            await pool.query(participantQuery, participantValues);
+            await pool.query('COMMIT');
+        } catch (participantError) {
+            await pool.query('ROLLBACK');
+            console.error(`Error adding participant: ${driverLicense}`, participantError);
+            throw participantError;
+        }
+
+        res.status(201).json({message: 'Accident information added successfully', accidentId});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: 'Error adding accident information'});
+    }
+});
+
 // Получения всех ДТП с участием пользователя
 router.get('/user-accidents', async (req, res) => {
     const token = req.headers.authorization;
@@ -186,7 +227,13 @@ router.get('/user-accidents', async (req, res) => {
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
-        const query = 'SELECT a.* FROM accident a INNER JOIN accident_participant ap ON a.id = ap.accident_id WHERE ap.driver_id = $1';
+        const query = `
+            SELECT a.*
+            FROM accident a
+                     INNER JOIN accident_participant ap ON a.id = ap.accident_id
+                     INNER JOIN driver d ON ap.participant_driver_license = d.driver_license
+            WHERE d.id = $1
+        `;
         const values = [decodedToken.id];
 
         const result = await pool.query(query, values);

@@ -99,7 +99,7 @@ router.get('/accidents', async (req, res) => {
                    a.accident_type,
                    a.accident_cause,
                    a.casualties,
-                   array_agg(json_build_object('driver_id', ap.driver_id, 'vehicle_id', ap.vehicle_id)) AS participants
+                   array_agg(json_build_object('driver_license', ap.participant_driver_license, 'vehicle_reg_number', ap.participant_vehicle_reg_number)) AS participants
             FROM accident a
                      LEFT JOIN accident_participant ap ON a.id = ap.accident_id
             GROUP BY a.id, a.report_number, a.date, a.location, a.accident_type, a.accident_cause, a.casualties
@@ -110,7 +110,7 @@ router.get('/accidents', async (req, res) => {
         const accidentsWithParticipants = result.rows.map(accident => {
             return {
                 ...accident,
-                participants: accident.participants.filter(participant => participant.driver_id != null)
+                participants: accident.participants.filter(participant => participant.driver_license != null)
             };
         });
 
@@ -121,11 +121,9 @@ router.get('/accidents', async (req, res) => {
     }
 });
 
-
 // Получение сведений о водителях
 router.get('/drivers', async (req, res) => {
     const token = req.headers.authorization;
-    console.log(token);
 
     try {
         jwt.verify(token, process.env.JWT_ACCESS_SECRET);

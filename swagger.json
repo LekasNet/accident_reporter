@@ -207,17 +207,43 @@
         }
       }
     },
+    "/drivers/add-accident-auto": {
+      "post": {
+        "tags": [
+          "drivers"
+        ],
+        "summary": "Automatically add accident information",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccidentAuto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Accident information added successfully"
+          },
+          "500": {
+            "description": "Error adding accident information"
+          }
+        }
+      }
+    },
     "/policeDepartment/register": {
       "post": {
         "tags": [
           "policeDepartment"
         ],
         "summary": "Register a new police officer",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -247,11 +273,6 @@
           "policeDepartment"
         ],
         "summary": "Police officer login",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -366,7 +387,7 @@
   "components": {
     "securitySchemes": {
       "bearerAuth": {
-        "type": "https",
+        "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
@@ -468,11 +489,11 @@
             "items": {
               "type": "object",
               "properties": {
-                "driver_id": {
-                  "type": "integer"
+                "driver_license": {
+                  "type": "string"
                 },
-                "vehicle_id": {
-                  "type": "integer"
+                "vehicle_reg_number": {
+                  "type": "string"
                 }
               }
             }
@@ -486,6 +507,38 @@
           "accident_cause",
           "casualties",
           "participants"
+        ]
+      },
+      "AccidentAuto": {
+        "type": "object",
+        "properties": {
+          "report_number": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location": {
+            "type": "string"
+          },
+          "accident_type": {
+            "type": "string"
+          },
+          "accident_cause": {
+            "type": "string"
+          },
+          "casualties": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "report_number",
+          "date",
+          "location",
+          "accident_type",
+          "accident_cause",
+          "casualties"
         ]
       },
       "PoliceOfficerRegistration": {
