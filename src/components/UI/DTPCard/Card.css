@@ -1,5 +1,5 @@
 .card{
-    width: 200px;
+    width: 250px;
     /*height: 300px;*/
     padding: 0 10px 0 10px;
 }
@@ -10,11 +10,18 @@
     border-top: 1px solid #ccc ;
 }
 
+.card-info-text{
+    /*display: flex;*/
+    /*position: relative;*/
+    text-align: left;
+    width: 100px;
+}
 
 .cars-description{
     border-top: 2px solid #ccc ;
     text-align: right;
 }
+
 
 .additional-info{
     position: absolute;

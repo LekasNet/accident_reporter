@@ -20,7 +20,6 @@
 <script>
   import DTPCard from "@/components/UI/DTPCard/Card.vue";
   import './DtpPage.css'
-  // import vehicle from "@/components/VehiclePage/Vehicle.vue";
   export default {
     name: "DtpPage",
     components: {
@@ -29,7 +28,7 @@
     data() {
       return {
         cards: [],
-        cards2: []
+        // cards2: []
       }
     },
 
@@ -42,43 +41,54 @@
         try {
           const token = localStorage.getItem('token');
           console.log(token);
-          const request_accident = {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'authorization': `${token}`,
-            },
-          };
-          const response_accident = await fetch('https://accident-reporter.onrender.com/policeDepartment/accidents', request_accident);
-          const jsonData = await response_accident.json();
-          console.log(jsonData.data);
 
-          const request_vehicles = {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'authorization': `${token}`,
-            },
-          };
-          const response_vehicles = await fetch('https://accident-reporter.onrender.com/policeDepartment/vehicles', request_vehicles);
-          const jsonVehData = await response_vehicles.json();
+          const [response_accident, response_vehicles] = await Promise.all([
+            fetch('https://accident-reporter.onrender.com/policeDepartment/accidents', {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'authorization': `${token}`,
+              },
+            }),
+            fetch('https://accident-reporter.onrender.com/policeDepartment/vehicles', {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'authorization': `${token}`,
+              },
+            }),
+          ]);
+
+          const [jsonData, jsonVehData] = await Promise.all([
+            response_accident.json(),
+            response_vehicles.json(),
+          ]);
+
+          console.log(jsonData.data);
           console.log(jsonVehData.data);
 
           if (Array.isArray(jsonData.data) && Array.isArray(jsonVehData.data)) {
+            // this.cards2 = jsonVehData.data;
             this.cards = jsonData.data;
+            console.log(this.cards[0])
             this.cards = jsonData.data.map(item => ({
               title: `ДТП №${item.report_number}`,
-              date: item.date,
-              GosNumb: this.cards2.find(veh => veh.id === item.participants.vehicle_id
-              )?.reg_number,
+              date: item.date.replace('T', ' ').slice(0, 19),
+              GosNumb: item.participants.map(participant => {
+                return jsonVehData.data.find(veh => veh.id === participant.vehicle_id)?.reg_number;
+              }).filter(regNumber => regNumber !== undefined).join(' '),
               Data: item.location,
               description: item.accident_cause,
               gosNumbAdditionalInfo: item.participants.driver_id,
               dataAdditionalInfo: item.accident_type,
             }));
+            console.log(this.cards[0])
+
+
           } else {
             console.error('Ошибка: сервер не возвращает массив данных');
           }
+
         } catch (error) {
           console.error('Ошибка получения данных о ДТП:', error);
         }

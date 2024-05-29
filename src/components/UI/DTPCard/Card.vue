@@ -58,11 +58,11 @@
     <h2>{{title}}</h2>
     <div class="cars-description">
       <div class="card-info">
-        <p>Дата:</p>
+        <p class="card-info-text">Дата:</p>
         <p class="cars-description-item">{{date}}</p>
       </div>
       <div class="card-info" @click="showInfo('gos-numb')">
-        <p>Гос. номер:</p>
+        <p class="card-info-text">Гос. номер:</p>
         <p class="cars-description-item">{{GosNumb}}</p>
         <div class="additional-info" v-if="activeInfo === 'gos-numb'">
           <p>Дополнительная информация:</p>
@@ -70,7 +70,7 @@
         </div>
       </div>
       <div class="card-info" @click="showInfo('data')">
-        <p>Инфа:</p>
+        <p class="card-info-text">Инфа:</p>
         <p class="cars-description-item">{{Data}}</p>
         <div class="additional-info" v-if="activeInfo === 'data'">
           <p>Дополнительная информация:</p>
@@ -78,7 +78,7 @@
         </div>
       </div>
       <div class="card-info" @click="showInfo('description')">
-        <p>Описание:</p>
+        <p class="card-info-text">Описание:</p>
         <p class="cars-description-item">подробнее..</p>
         <div class="additional-info" v-if="activeInfo === 'description'">
           <p>Дополнительная информация:</p>
