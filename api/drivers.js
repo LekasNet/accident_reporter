@@ -141,6 +141,7 @@ router.get('/vehicles', async (req, res) => {
     }
 });
 
+// Добавить информацию о ДТП
 router.post('/add-accident', async (req, res) => {
     const {date, location, accident_type, accident_cause, casualties, participants, photos} = req.body;
     const token = req.headers.authorization;
@@ -153,20 +154,21 @@ router.post('/add-accident', async (req, res) => {
         const accidentResult = await pool.query(accidentQuery, accidentValues);
         const accidentId = accidentResult.rows[0].id;
 
-        const participantsQuery = 'INSERT INTO accident_participant (accident_id, participant_driver_license, participant_vehicle_reg_number) VALUES ($1, $2, $3)';
-        const photosQuery = 'INSERT INTO accident_photo (accident_id, photo) VALUES ($1, $2)';
+        const participantValues = participants.map(participant => [accidentId, participant.driver_license, participant.vehicle_reg_number]);
+        const photosValues = photos.map(photo => [accidentId, photo]);
 
         await pool.query('BEGIN');
         try {
-            for (const participant of participants) {
-                const participantValues = [accidentId, participant.driver_license, participant.vehicle_reg_number];
-                await pool.query(participantsQuery, participantValues);
-            }
+            await pool.query(`
+                INSERT INTO accident_participant (accident_id, participant_driver_license,
+                                                  participant_vehicle_reg_number)
+                SELECT unnest($1::integer[]), unnest($2::text[]), unnest($3::text[])
+            `, [participantValues.map(v => v), participantValues.map(v => v), participantValues.map(v => v)]);
 
-            for (const photo of photos) {
-                const photoValues = [accidentId, photo];
-                await pool.query(photosQuery, photoValues);
-            }
+            await pool.query(`
+                INSERT INTO accident_photo (accident_id, photo)
+                SELECT unnest($1::integer[]), unnest($2::text[])
+            `, [photosValues.map(v => v), photosValues.map(v => v)]);
 
             await pool.query('COMMIT');
             res.status(201).json({message: 'Accident information added successfully', accidentId});
