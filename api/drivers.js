@@ -148,44 +148,40 @@ router.post('/add-accident', async (req, res) => {
 
     try {
         jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-
-        const accidentQuery = 'INSERT INTO accident (date, location, accident_type, accident_cause, casualties) VALUES ($1, $2, $3, $4, $5) RETURNING id';
-        const accidentValues = [date, location, accident_type, accident_cause, casualties];
-
-        const accidentResult = await pool.query(accidentQuery, accidentValues);
+        const accidentQuery = {
+            text: `INSERT INTO accident (date, location, accident_type, accident_cause, casualties)
+                   VALUES ($1, $2, $3, $4, $5)
+                   RETURNING *`,
+            values: [date, location, accident_type, accident_cause, casualties],
+        };
+        const accidentResult = await pool.query(accidentQuery);
         const accidentId = accidentResult.rows[0].id;
 
-        const participantValues = participants.map(participant => [
-            accidentId,
-            participant.driver_license,
-            participant.vehicle_reg_number
-        ]);
-
-        const photosValues = photos.map(photo => [accidentId, photo]);
-
-        await pool.query('BEGIN');
-        try {
-            await pool.query(`
-                INSERT INTO accident_participant (accident_id, participant_driver_license,
-                                                  participant_vehicle_reg_number)
-                SELECT unnest($1::integer[]), unnest($2::text[]), unnest($3::text[])
-            `, [participantValues.map(v => v), participantValues.map(v => v), participantValues.map(v => v)]);
-
-            await pool.query(`
-                INSERT INTO accident_photo (accident_id, photo)
-                SELECT unnest($1::integer[]), unnest($2::text[])
-            `, [photosValues.map(v => v), photosValues.map(v => v)]);
-
-            await pool.query('COMMIT');
-            res.status(201).json({message: 'Accident information added successfully', accidentId});
-        } catch (error) {
-            await pool.query('ROLLBACK');
-            console.error(error);
-            res.status(500).json({message: 'Error adding accident information'});
+        for (const participant of participants) {
+            const participantQuery = {
+                text: `INSERT INTO accident_participant (accident_id, participant_driver_license,
+                                                         participant_vehicle_reg_number)
+                       VALUES ($1, $2, $3)
+                       RETURNING *`,
+                values: [accidentId, participant.driverLicense, participant.vehicleRegNumber],
+            };
+            await pool.query(participantQuery);
         }
+
+        for (const photo of photos) {
+            const photoQuery = {
+                text: `INSERT INTO accident_photo (accident_id, photo)
+                       VALUES ($1, $2)
+                       RETURNING *`,
+                values: [accidentId, photo],
+            };
+            await pool.query(photoQuery);
+        }
+
+        res.status(201).json({message: 'Accident added successfully'});
     } catch (error) {
         console.error(error);
-        res.status(500).json({message: 'Error adding accident information'});
+        res.status(500).json({message: 'Error adding accident'});
     }
 });
 
