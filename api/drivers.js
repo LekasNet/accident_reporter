@@ -142,13 +142,13 @@ router.get('/vehicles', async (req, res) => {
 });
 
 router.post('/add-accident', async (req, res) => {
-    const {report_number, date, location, accident_type, accident_cause, casualties, participants, photos} = req.body;
+    const {date, location, accident_type, accident_cause, casualties, participants, photos} = req.body;
     const token = req.headers.authorization;
 
     try {
         jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-        const accidentQuery = 'INSERT INTO accident (report_number, date, location, accident_type, accident_cause, casualties) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id';
-        const accidentValues = [report_number, date, location, accident_type, accident_cause, casualties];
+        const accidentQuery = 'INSERT INTO accident (date, location, accident_type, accident_cause, casualties) VALUES ($1, $2, $3, $4, $5) RETURNING id';
+        const accidentValues = [date, location, accident_type, accident_cause, casualties];
 
         const accidentResult = await pool.query(accidentQuery, accidentValues);
         const accidentId = accidentResult.rows[0].id;

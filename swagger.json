@@ -475,7 +475,6 @@
           }
         },
         "required": [
-          "report_number",
           "date",
           "location",
           "accident_type",

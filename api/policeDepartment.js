@@ -93,7 +93,6 @@ router.get('/accidents', async (req, res) => {
 
         const query = `
             SELECT a.id,
-                   a.report_number,
                    a.date,
                    a.location,
                    a.accident_type,
@@ -102,7 +101,7 @@ router.get('/accidents', async (req, res) => {
                    array_agg(json_build_object('driver_license', ap.participant_driver_license, 'vehicle_reg_number', ap.participant_vehicle_reg_number)) AS participants
             FROM accident a
                      LEFT JOIN accident_participant ap ON a.id = ap.accident_id
-            GROUP BY a.id, a.report_number, a.date, a.location, a.accident_type, a.accident_cause, a.casualties
+            GROUP BY a.id, a.date, a.location, a.accident_type, a.accident_cause, a.casualties
             ORDER BY a.date DESC, a.id;`;
 
         const result = await pool.query(query);
