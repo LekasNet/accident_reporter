@@ -1,10 +1,47 @@
+<template>
+  <div class="drivers-wrapper">
+    <button class="btn" @click="back">Назад</button>
+    <h2>Реестр зарегистированного транспорта:</h2>
+    <div class="table-container">
+      <table id="drTable" class="table table-condensed table-striped table-bordered table-fixed-width">
+        <thead>
+        <tr>
+          <th @click="showFilter('brand')">Марка</th>
+          <th @click="showFilter('model')">Модель</th>
+          <th @click="showFilter('body_type')">Тип</th>
+          <th>Регистрационный номер</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+    <div v-if="showFilterPopup" class="filter-popup">
+      <h3>Фильтр по {{ filterBy }}</h3>
+      <ul>
+        <li v-for="option in filterOptions" :key="option">
+          <input type="checkbox" :value="option" v-model="selectedFilters">
+          {{ option }}
+        </li>
+      </ul>
+      <button @click="applyFilter()">Применить фильтр</button>
+      <button @click="resetFilter()">Сбросить фильтр</button>
+      <button @click="showFilterPopup = false">Закрыть</button>
+    </div>
+  </div>
+</template>
+
 <script>
-import './VehiclePage.css';
 export default {
   name: 'VehiclePage',
   data() {
     return {
       vehicles: [],
+      allVehicles: [],
+      showFilterPopup: false,
+      filterBy: '',
+      filterOptions: [],
+      selectedFilters: [],
     };
   },
   methods: {
@@ -27,6 +64,7 @@ export default {
         console.log(jsonResponse.data);
         if (Array.isArray(jsonResponse.data)) {
           this.vehicles = jsonResponse.data;
+          this.allVehicles = [...jsonResponse.data];
           this.updateTable(this.vehicles);
         } else {
           console.error('Ошибка: сервер не возвращает массив данных');
@@ -57,63 +95,49 @@ export default {
         row.appendChild(numbCell);
         tbody.appendChild(row);
       });
-    }
+    },
+    showFilter(by) {
+      this.filterBy = by;
+      this.filterOptions = [...new Set(this.vehicles.map(vehicle => vehicle[by]))];
+      this.showFilterPopup = true;
+    },
+    applyFilter() {
+      if (this.selectedFilters.length > 0) {
+        this.vehicles = this.allVehicles.filter(vehicle => {
+          return this.selectedFilters.includes(vehicle[this.filterBy]);
+        });
+        this.updateTable(this.vehicles);
+      }
+      this.showFilterPopup = false;
+    },
+    resetFilter() {
+      this.vehicles = [...this.allVehicles];
+      this.updateTable(this.vehicles);
+      this.selectedFilters = [];
+      this.showFilterPopup = false;
+    },
   },
   mounted() {
     this.getDrivers();
-
-    const sortSelect = document.getElementById('sort-select');
-    sortSelect.addEventListener('change', function() {
-      const selectedValue = sortSelect.value;
-      let sortedData = [];
-      if (selectedValue === 'accidents-asc') {
-        sortedData = this.drivers.sort((a, b) => a.accidents - b.accidents);
-        // } else if (selectedValue === 'accidents-desc') {
-        //   sortedData = this.drivers.sort((a, b) => b.accidents - a.accidents);
-        // } else if (selectedValue === 'id-asc') {
-        //   sortedData = this.drivers.sort((a, b) => a.id - b.id);
-        // } else if (selectedValue === 'name-asc') {
-        //   sortedData = this.drivers.sort((a, b) => a.full_name.localeCompare(b.full_name));
-        // } else if (selectedValue === 'name-desc') {
-        //   sortedData = this.drivers.sort((a, b) => b.full_name.localeCompare(a.full_name));
-      }
-
-      this.updateTable(sortedData);
-    }.bind(this));
   },
 };
-
 </script>
 
-<template>
-  <div class="drivers-wrapper">
-    <!--    <router-link class="btn" to="/admin">Назад</router-link>-->
-    <button class="btn" @click="back">Назад</button>
-    <h2>Реестр зарегистированного транспорта:</h2>
-    <select id="sort-select" class="my-select">
-      <option value="default">Выберите сортировку</option>
-      <option value="accidents-asc" class="my-option">По маркам</option>
-      <option value="accidents-desc" class="my-option">По рег. номеру</option>
-      <option value="id-asc" class="my-option">По типу</option>
-    </select>
-    <div class="table-container">
-      <table id="drTable" class="table table-condensed table-striped table-bordered table-fixed-width">
-        <thead>
-        <tr>
-          <th>Марка</th>
-          <th>Модель</th>
-          <th>Тип</th>
-          <th>Регистрационный номер</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
-    </div>
-
-  </div>
-</template>
-
 <style scoped>
+.filter-popup {
+  position: absolute;
+  width: 200px;
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
 
-</style>s
+.filter-popup ul{
+  list-style: none;
+  text-align: left;
+
+}
+</style>
+

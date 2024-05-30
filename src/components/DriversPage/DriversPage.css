@@ -46,20 +46,23 @@
 
 .table th,
 .table td {
-    border: 1px solid #ddd; /* Граница вокруг ячеек */
+    border: 1px solid rgba(21, 23, 62, 0.32); /* Граница вокруг ячеек */
     padding: 8px; /* Отступ внутри ячеек */
     text-align: left; /* Выравнивание текста по левому краю */
 }
 
 .table th {
-    background-color: #f2f2f2; /* Цвет фона заголовков таблицы */
+    background-color: #f8f8f8; /* Цвет фона заголовков таблицы */
     font-weight: bold; /* Полужирный шрифт для заголовков таблицы */
+    z-index: 1;
 }
 
 .table tr:nth-child(even) {
-    background-color: #f2f2f2; /* Цвет фона четных строк таблицы */
+    background-color: #f8f8f8; /* Цвет фона четных строк таблицы */
 }
 
 .table tr:hover {
-    background-color: #ddd; /* Цвет фона при наведении на строку таблицы */
+    background-color: #caebef; /* Цвет фона при наведении на строку таблицы */
+    z-index: 1;
+
 }

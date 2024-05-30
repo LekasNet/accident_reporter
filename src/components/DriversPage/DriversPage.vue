@@ -100,8 +100,8 @@ export default {
         sortedData = this.drivers.sort((a, b) => a.accidents - b.accidents);
       // } else if (selectedValue === 'accidents-desc') {
       //   sortedData = this.drivers.sort((a, b) => b.accidents - a.accidents);
-      // } else if (selectedValue === 'id-asc') {
-      //   sortedData = this.drivers.sort((a, b) => a.id - b.id);
+      } else if (selectedValue === 'id-asc') {
+        sortedData = this.drivers.sort((a, b) => a.id - b.id);
       // } else if (selectedValue === 'name-asc') {
       //   sortedData = this.drivers.sort((a, b) => a.full_name.localeCompare(b.full_name));
       // } else if (selectedValue === 'name-desc') {
@@ -113,3 +113,8 @@ export default {
   },
 };
 </script>
+
+
+<!--добавить колонку с колличеством дтп, которая будет подсчитываться по id водителя, сколько раз он встречается в таблице из бд (accidents) 'https://accident-reporter.onrender.com/policeDepartment/accidents'-->
+
+<!--структура данных в accident:-->

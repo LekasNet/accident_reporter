@@ -3,6 +3,10 @@
   export default {
     name: "DTPCard",
     props: {
+      id: {
+        type: Number,
+        required: true
+      },
       title: {
         type: String,
         required: true
@@ -33,12 +37,9 @@
       },
     },
     data() {
-      // return {
-      //   showGosNumbInfo: false,
-      //   showDataInfo: false,
-      // };
       return {
         activeInfo: null,
+        localStatus: this.status
       };
     },
     methods: {
@@ -61,30 +62,18 @@
         <p class="card-info-text">Дата:</p>
         <p class="cars-description-item">{{date}}</p>
       </div>
-      <div class="card-info" @click="showInfo('gos-numb')">
-        <p class="card-info-text">Гос. номер:</p>
-        <p class="cars-description-item">{{GosNumb}}</p>
-        <div class="additional-info" v-if="activeInfo === 'gos-numb'">
-          <p>Дополнительная информация:</p>
-          <p>{{gosNumbAdditionalInfo}}</p>
-        </div>
-      </div>
+<!--      <div class="card-info" @click="showInfo('gos-numb')">-->
+<!--        <p class="card-info-text">Гос. номер:</p>-->
+<!--        <p class="cars-description-item">{{GosNumb}}</p>-->
+<!--      </div>-->
       <div class="card-info" @click="showInfo('data')">
-        <p class="card-info-text">Инфа:</p>
+        <p class="card-info-text">Расположение:</p>
         <p class="cars-description-item">{{Data}}</p>
-        <div class="additional-info" v-if="activeInfo === 'data'">
-          <p>Дополнительная информация:</p>
-          <p>{{dataAdditionalInfo}}</p>
-        </div>
       </div>
-      <div class="card-info" @click="showInfo('description')">
-        <p class="card-info-text">Описание:</p>
-        <p class="cars-description-item">подробнее..</p>
-        <div class="additional-info" v-if="activeInfo === 'description'">
-          <p>Дополнительная информация:</p>
-          <p>{{description}}</p>
-        </div>
-      </div>
+<!--      <div class="card-info" @click="showInfo('description')">-->
+<!--        <p class="card-info-text">Описание:</p>-->
+<!--        <p class="cars-description-item">подробнее..</p>-->
+<!--      </div>-->
     </div>
   </div>
 </template>

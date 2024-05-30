@@ -5,6 +5,7 @@
     <DTPCard class="card-item"
              v-for="(item, index) in cards"
              :key="index"
+             :id="item.id"
              :title="item.title"
              :date="item.date"
              :GosNumb="item.GosNumb"
@@ -12,7 +13,19 @@
              :description="item.description"
              :gosNumbAdditionalInfo="item.gosNumbAdditionalInfo"
              :dataAdditionalInfo="item.dataAdditionalInfo"
+             @click="showDetails(item)"
     />
+  </div>
+
+  <div v-if="selectedCard" class="details-popup">
+    <h2>{{ selectedCard.title }}</h2>
+    <p>Дата: {{ selectedCard.date }}</p>
+    <p>Гос. номер: {{ selectedCard.GosNumb }}</p>
+    <p>Место: {{ selectedCard.Data }}</p>
+    <p>Причина: {{ selectedCard.description }}</p>
+    <p>Дополнительная информация о гос. номере: {{ selectedCard.gosNumbAdditionalInfo }}</p>
+    <p>Дополнительная информация о дате: {{ selectedCard.dataAdditionalInfo }}</p>
+    <button @click="selectedCard = null">Закрыть</button>
   </div>
 </template>
 
@@ -20,6 +33,7 @@
 <script>
   import DTPCard from "@/components/UI/DTPCard/Card.vue";
   import './DtpPage.css'
+
   export default {
     name: "DtpPage",
     components: {
@@ -28,6 +42,7 @@
     data() {
       return {
         cards: [],
+        selectedCard: null,
         // cards2: []
       }
     },
@@ -72,6 +87,7 @@
             this.cards = jsonData.data;
             console.log(this.cards[0])
             this.cards = jsonData.data.map(item => ({
+              id: item.id,
               title: `ДТП №${item.report_number}`,
               date: item.date.replace('T', ' ').slice(0, 19),
               GosNumb: item.participants.map(participant => {
@@ -92,7 +108,10 @@
         } catch (error) {
           console.error('Ошибка получения данных о ДТП:', error);
         }
-      }
+      },
+      showDetails(card) {
+        this.selectedCard = card;
+      },
     },
 
     mounted() {
@@ -100,4 +119,18 @@
     }
   }
 </script>
+
+<style>
+  .details-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+</style>
 

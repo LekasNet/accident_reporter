@@ -7,14 +7,13 @@ import DtpPage from "@/components/DtpPage/DtpPage.vue";
 import DriversPage from "@/components/DriversPage/DriversPage.vue";
 import VehiclePage from "@/components/VehiclePage/Vehicle.vue";
 
-
 const routes = [
     {path: '/main', component: MainPage},
     {path: '/', component: LoginPage},
     {path: '/admin', component: AdminPage},
     {path: '/admin/dtp', component: DtpPage},
     {path: '/admin/drivers', component: DriversPage},
-    {path: '/admin/vehicles', component: VehiclePage}
+    {path: '/admin/vehicles', component: VehiclePage},
 ];
 
 const router = createRouter({
