@@ -434,9 +434,6 @@
       "Accident": {
         "type": "object",
         "properties": {
-          "report_number": {
-            "type": "string"
-          },
           "date": {
             "type": "string",
             "format": "date-time"
@@ -480,8 +477,7 @@
           "accident_type",
           "accident_cause",
           "casualties",
-          "participants",
-          "photos"
+          "participants"
         ]
       },
       "PoliceOfficerRegistration": {

@@ -159,11 +159,11 @@ router.post('/add-accident', async (req, res) => {
 
         for (const participant of participants) {
             const participantQuery = {
-                text: `INSERT INTO accident_participant (accident_id, participant_driver_license,
+                text: `INSERT INTO accident_participant (accident_id, participant_id, participant_driver_license,
                                                          participant_vehicle_reg_number)
-                       VALUES ($1, $2, $3)
+                       VALUES ($1, DEFAULT, $2, $3)
                        RETURNING *`,
-                values: [accidentId, participant.driverLicense, participant.vehicleRegNumber],
+                values: [accidentId, participant.driver_license, participant.vehicle_reg_number],
             };
             await pool.query(participantQuery);
         }
