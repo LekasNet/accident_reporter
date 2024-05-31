@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> {
       theme: AppTheme.theme,
       home: SafeArea(
         bottom: false,
-        child: MainPage(),
+        child: LoginSignupPage(),
       ),
     );
   }

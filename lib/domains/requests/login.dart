@@ -13,7 +13,6 @@ Future<bool> login(String login, String password) async {
     "login": login,
     "password": password
   });
-
   try {
     final response = await http.post(url, headers: headers, body: body);
     if (response.statusCode == 200) {
