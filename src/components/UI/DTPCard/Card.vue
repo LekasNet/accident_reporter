@@ -67,8 +67,8 @@
 <!--        <p class="cars-description-item">{{GosNumb}}</p>-->
 <!--      </div>-->
       <div class="card-info" @click="showInfo('data')">
-        <p class="card-info-text">Расположение:</p>
-        <p class="cars-description-item">{{Data}}</p>
+        <p class="card-info-text">Описание:</p>
+        <p class="cars-description-item">{{dataAdditionalInfo}}</p>
       </div>
 <!--      <div class="card-info" @click="showInfo('description')">-->
 <!--        <p class="card-info-text">Описание:</p>-->

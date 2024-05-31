@@ -2,6 +2,19 @@
   <div class="drivers-wrapper">
     <button class="btn" @click="back">Назад</button>
     <h2>Реестр зарегистированного транспорта:</h2>
+    <div v-if="showFilterPopup" class="modal-popup">
+      <div class="filter-popup">
+        <h3>Фильтр по {{ filteredName(filterBy).toLocaleLowerCase() }}</h3>
+        <ul>
+          <li v-for="option in filterOptions" :key="option">
+            <input type="checkbox" :value="option" v-model="selectedFilters">          {{ option }}
+          </li>
+        </ul>
+        <button @click="applyFilter()">Применить фильтр</button>
+        <button @click="resetFilter()">Сбросить фильтр</button>
+        <button @click="showFilterPopup = false">Закрыть</button>
+      </div>
+    </div>
     <div class="table-container">
       <table id="drTable" class="table table-condensed table-striped table-bordered table-fixed-width">
         <thead>
@@ -16,24 +29,16 @@
         </tbody>
       </table>
     </div>
-    <div v-if="showFilterPopup" class="filter-popup">
-      <h3>Фильтр по {{ filterBy }}</h3>
-      <ul>
-        <li v-for="option in filterOptions" :key="option">
-          <input type="checkbox" :value="option" v-model="selectedFilters">
-          {{ option }}
-        </li>
-      </ul>
-      <button @click="applyFilter()">Применить фильтр</button>
-      <button @click="resetFilter()">Сбросить фильтр</button>
-      <button @click="showFilterPopup = false">Закрыть</button>
-    </div>
   </div>
+  <AppFooter/>
 </template>
 
 <script>
+import AppFooter from "@/components/UI/Footer.vue";
+
 export default {
   name: 'VehiclePage',
+  components: {AppFooter},
   data() {
     return {
       vehicles: [],
@@ -103,19 +108,36 @@ export default {
     },
     applyFilter() {
       if (this.selectedFilters.length > 0) {
-        this.vehicles = this.allVehicles.filter(vehicle => {
-          return this.selectedFilters.includes(vehicle[this.filterBy]);
-        });
+        if (this.vehicles.length === this.allVehicles.length) {
+          this.vehicles = this.allVehicles.filter(vehicle => {
+            return this.selectedFilters.includes(vehicle[this.filterBy]);
+          });
+        } else {
+          this.vehicles = this.vehicles.filter(vehicle => {
+            return this.selectedFilters.includes(vehicle[this.filterBy]);
+          });
+        }
         this.updateTable(this.vehicles);
       }
       this.showFilterPopup = false;
     },
+
     resetFilter() {
       this.vehicles = [...this.allVehicles];
       this.updateTable(this.vehicles);
       this.selectedFilters = [];
       this.showFilterPopup = false;
     },
+
+    filteredName(tag) {
+      var names = {
+        "brand" : "Бренд",
+        "model" : "Модель",
+        "body_type" : "Тип"
+      }
+      return names[tag]
+    }
+
   },
   mounted() {
     this.getDrivers();
@@ -125,19 +147,27 @@ export default {
 
 <style scoped>
 .filter-popup {
-  position: absolute;
+  margin: 15px auto 20px;
   width: 200px;
   background-color: #fff;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 
 .filter-popup ul{
   list-style: none;
   text-align: left;
 
+}
+
+.modal-popup {
+  width: 95vw;
+  height: 50vh;
+  position: absolute;
+  align-content: center;
 }
 </style>
 

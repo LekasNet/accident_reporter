@@ -1,14 +1,45 @@
 <script>
   import './AdminPage.css'
+  import AppFooter from "@/components/UI/Footer.vue";
   import DynamicSvg from "@/components/UI/Icon/DynamicSvg.vue";
   export default {
     name: 'AdminPage',
-    components: {DynamicSvg},
+    components: {AppFooter, DynamicSvg},
+    data(){
+      return{
+        userName: '',
+      };
+    },
     methods: {
       logout() {
         this.$router.push('/')
       },
+      async Admin() {
+        try {
+          const token = localStorage.getItem('token');
+          console.log(token);
+
+          const request = {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'authorization': `${token}`,
+            },
+          };
+
+          const response = await fetch('https://accident-reporter.onrender.com/policeDepartment/profile', request
+          ).then(response => response.json());
+
+          console.log(response.data);
+          this.userName = response.data.full_name;
+        }catch (error){
+          console.error('Ошибка получения данных о пользователе:', error);
+        }
+      },
     },
+    mounted() {
+      this.Admin();
+    }
   };
 </script>
 
@@ -16,7 +47,6 @@
   <header>
     <div class="header-wrapper">
       <DynamicSvg name="user" class="icon"/>
-<!--      <router-link class="btn-logout" to="/" @click="logout">Logout</router-link>-->
       <button class="btn-logout" @click="logout">Выход</button>
     </div>
   </header>
@@ -30,9 +60,10 @@
         </nav>
       </div>
       <div class="main-content">
-        <h1>Admin Page</h1>
-        <p>Welcome, admin!</p>
+        <h1>Страница администратора</h1>
+        <p>Добро пожаловть, {{ userName }}!</p>
       </div>
     </div>
   </main>
+  <AppFooter />
 </template>

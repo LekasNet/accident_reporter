@@ -17,23 +17,6 @@
     background-color: #3e404a;
 }
 
-.my-select {
-    width: 320px;
-    padding: 5px;
-    font-size: 16px;
-    border-radius: 10px;
-    border: 1px solid #cacaca;
-    margin-bottom: 15px;
-}
-
-.my-option {
-    width: 200px;
-    /*height: 20px;*/
-    /*margin: 5px;*/
-    padding: 50px;
-    font-size: 16px;
-}
-
 .table-container {
     margin: 0 auto; /* Выравнивание таблицы по центру */
     width: 80%; /* Ширина таблицы */
@@ -64,5 +47,13 @@
 .table tr:hover {
     background-color: #caebef; /* Цвет фона при наведении на строку таблицы */
     z-index: 1;
+}
 
+.my-input{
+    width: 250px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: normal;
 }

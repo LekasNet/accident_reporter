@@ -2,12 +2,13 @@
     width: 250px;
     /*height: 300px;*/
     padding: 0 10px 0 10px;
+    background-color: #cbdcb4;
 }
 
 .card-info{
     display: flex;
     justify-content: space-between;
-    border-top: 1px solid #ccc ;
+    border-top: 1px solid #888888;
 }
 
 .card-info-text{
@@ -18,7 +19,7 @@
 }
 
 .cars-description{
-    border-top: 2px solid #ccc ;
+    border-top: 2px solid #ffffff;
     text-align: right;
 }
 
